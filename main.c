@@ -29,6 +29,9 @@ int main(int argc, char **argv) {
     float px = 300.0f, py = 200.0f, velY = 0.0f;
     int isJumping = 1;
     
+    // --- NEW: Score tracking ---
+    int score = 0; 
+    
     // Physics constants
     const float GRAVITY = 0.5f;
     const float JUMP_POWER = -12.0f;
@@ -38,7 +41,6 @@ int main(int argc, char **argv) {
     const float playerSize = 16.0f * drawScale;
 
     // Platform generation constraints
-    // Max horizontal jump distance is roughly (Speed * Time_in_air)
     const float MAX_JUMP_DIST = 215.0f; 
 
     Platform stages[MAX_PLATFORMS];
@@ -55,13 +57,11 @@ int main(int argc, char **argv) {
         stages[i].w = 100;
         stages[i].h = 15;
         stages[i].color = 0xFFFFFFFF;
-        stages[i].y = stages[i-1].y - 100; // 100px vertical gap
+        stages[i].y = stages[i-1].y - 100; 
         
-        // Calculate a safe X relative to the platform below
         float minX = stages[i-1].x - MAX_JUMP_DIST;
         float maxX = stages[i-1].x + stages[i-1].w + MAX_JUMP_DIST - stages[i].w;
         
-        // Keep it on screen (0 to 640)
         if (minX < 20) minX = 20;
         if (maxX > 520) maxX = 520;
         
@@ -96,16 +96,16 @@ int main(int argc, char **argv) {
             float diff = 200 - py;
             py = 200;
             
+            // --- NEW: Increase score as the camera scrolls up ---
+            score += (int)diff; 
+            
             for(int i = 0; i < MAX_PLATFORMS; i++) {
                 stages[i].y += diff;
                 
                 if (stages[i].y > 480) {
-                    // Find the current highest platform to spawn relative to it
                     int highestIdx = (i == 0) ? MAX_PLATFORMS - 1 : i - 1;
+                    stages[i].y = stages[highestIdx].y - 100; 
                     
-                    stages[i].y = stages[highestIdx].y - 100; // Vertical spacing
-                    
-                    // Logic: Spawn next platform within MAX_JUMP_DIST of the current highest one
                     float minX = stages[highestIdx].x - MAX_JUMP_DIST;
                     float maxX = stages[highestIdx].x + stages[highestIdx].w + MAX_JUMP_DIST - stages[i].w;
                     
@@ -130,7 +130,10 @@ int main(int argc, char **argv) {
         }
 
         // Rescue if falling off bottom
-        if (py > 480) { py = 0; px = 300; velY = 0; }
+        if (py > 480) { 
+            py = 0; px = 300; velY = 0; 
+            score = 0; // Reset score if you fall!
+        }
 
         // --- DRAWING ---
         GRRLIB_FillScreen(0x111111FF);
@@ -139,12 +142,21 @@ int main(int argc, char **argv) {
             GRRLIB_Rectangle(stages[i].x, stages[i].y, stages[i].w, stages[i].h, stages[i].color, 1);
         }
 
-        // Draw Player (Purple: 0x800080FF)
+        // Draw Player (Purple)
         if(tex_player) {
             GRRLIB_DrawImg(px, py, tex_player, 0, drawScale, drawScale, 0x800080FF);
         } else {
             GRRLIB_Rectangle(px, py, playerSize, playerSize, 0x800080FF, 1);
         }
+        
+        // --- NEW: Draw Text ---
+        // Top Left: Score
+        GRRLIB_Printf(20, 20, NULL, 0xFFFFFFFF, 1, "SCORE: %d", score);
+        // Top Right: Controls reminder
+        GRRLIB_Printf(380, 20, NULL, 0xFFFFFFFF, 1, "1: High Jump");
+        GRRLIB_Printf(380, 40, NULL, 0xFFFFFFFF, 1, "2: Normal Jump");
+        GRRLIB_Printf(340, 60, NULL, 0xFFFFFFFF, 1, "Move: Left, Right arrow");
+        GRRLIB_Printf(340, 80, NULL, 0xFFFFFFFF, 1, "Switch Wii remote sideways");
         
         GRRLIB_Render();
     }
