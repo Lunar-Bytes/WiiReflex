@@ -6,8 +6,6 @@
 build/
 builds/
 out/
-*.dol
-*.elf
 
 # Commands
 *.ps1
