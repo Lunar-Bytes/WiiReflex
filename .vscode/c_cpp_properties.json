@@ -1,23 +1,24 @@
 {
-    "configurations": [
-        {
-            "name": "Win32",
-            "includePath": [
-                "${workspaceFolder}/**",
-                "D:/devkitPro/libogc/include/**",
-                "D:/devkitPro/portlibs/wii/include/**",
-                "D:/devkitPro/portlibs/wii/**"
-            ],
-            "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
-            ],
-            "compilerPath": "D:\\Program Files\\TDM-GCC\\bin\\gcc.exe",
-            "cStandard": "c17",
-            "cppStandard": "gnu++14",
-            "intelliSenseMode": "windows-gcc-x64"
-        }
-    ],
-    "version": 4
+  "configurations": [
+    {
+      "name": "Wii DevKitPPC",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "D:/devkitPro/libogc/include",
+        "D:/devkitPro/libogc/include/wiiuse",
+        "D:/devkitPro/portlibs/wii/include",
+        "D:/devkitPro/portlibs/ppc/include",
+        "D:/devkitPro/GRRLIB/**"
+      ],
+      "defines": [
+        "__WII__",
+        "_DEBUG"
+      ],
+      "compilerPath": "D:/devkitPro/devkitPPC/bin/powerpc-eabi-gcc.exe",
+      "cStandard": "c11",
+      "cppStandard": "gnu++17",
+      "intelliSenseMode": "gcc-x64"
+    }
+  ],
+  "version": 4
 }
