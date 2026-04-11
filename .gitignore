@@ -1,0 +1,13 @@
+# Data
+.vscode
+.git
+
+# Build(s)
+build/
+builds/
+out/
+*.dol
+*.elf
+
+# Commands
+*.ps1
