@@ -27,7 +27,8 @@ typedef struct {
 
 // Score
 int score = 0;
-int lastPlatform = -1;
+float highestProgress = 0;
+float worldHeight = 0;
 
 void ResetLevel(Platform *stages, float maxJump) {
     stages[0].x = 220;
@@ -120,6 +121,7 @@ int main(int argc, char **argv) {
         if (py < 200) {
             float diff = 200 - py;
             py = 200;
+            worldHeight += diff;
 
             for (int i = 0; i < MAX_PLATFORMS; i++) {
                 stages[i].y += diff;
@@ -164,9 +166,10 @@ int main(int argc, char **argv) {
                     velY = 0;
                     isJumping = 0;
 
-                    if (lastPlatform != i) {
+                    // Fixed scoring
+                    if (worldHeight > highestProgress + 20) {
                         score++;
-                        lastPlatform = i;
+                        highestProgress = worldHeight;
                     }
                 }
             }
@@ -188,7 +191,8 @@ int main(int argc, char **argv) {
                     py = 200;
                     velY = 0;
                     score = 0;
-                    lastPlatform = -1;
+                    highestProgress = 0;
+                    worldHeight = 0;
 
                     msgTimer = 0;
                     msgAlpha = 0;
@@ -205,7 +209,8 @@ int main(int argc, char **argv) {
             py = 200;
             velY = 0;
             score = 0;
-            lastPlatform = -1;
+            highestProgress = 0;
+            worldHeight = 0;
 
             ResetLevel(stages, MAX_JUMP_DIST);
         }
@@ -248,7 +253,6 @@ int main(int argc, char **argv) {
 
             if (stages[i].hasEnemy) {
 
-                // Border
                 GRRLIB_Rectangle(
                     stages[i].x + stages[i].w/2 - 10,
                     stages[i].y - 18,
@@ -257,7 +261,6 @@ int main(int argc, char **argv) {
                     1
                 );
 
-                // Enemy
                 GRRLIB_Rectangle(
                     stages[i].x + stages[i].w/2 - 8,
                     stages[i].y - 16,
